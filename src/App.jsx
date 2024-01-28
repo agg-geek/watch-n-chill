@@ -4,11 +4,10 @@ import { movieData, watchedData } from './../data';
 
 const average = arr => arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-// see problem below, before numResults function
-// notice that the problem is fixed using component composition
-// we're passing movies directly to NumResults and MovieList
 export default function App() {
 	const [movies, setMovies] = useState(movieData);
+	const [watched, setWatched] = useState(watchedData);
+
 	return (
 		<>
 			<Navbar>
@@ -18,11 +17,14 @@ export default function App() {
 			</Navbar>
 
 			<Main>
-				<SearchedBox>
+				<Box>
 					<MovieList movies={movies} />
-				</SearchedBox>
+				</Box>
 
-				<WatchedBox />
+				<Box>
+					<WatchedSummary watched={watched} />
+					<WatchedList watched={watched} />
+				</Box>
 			</Main>
 		</>
 	);
@@ -55,12 +57,6 @@ function Search() {
 	);
 }
 
-// to fix the numResults thing here, you would have to pass movies to numResults,
-// and movies is defined in MovieList rn so you'll have to lift the state up,
-// and then pass movies all the way down
-// 1. App -> Navbar -> NumResults
-// 2. App -> Main -> SearchedBox -> MovieList
-// since none of the intermediate components need the prop, this is Prop drilling
 function NumResults({ movies }) {
 	return (
 		<p className="num-results">
@@ -73,15 +69,15 @@ function Main({ children }) {
 	return <main className="main">{children}</main>;
 }
 
-function SearchedBox({ children }) {
-	const [isOpen1, setIsOpen1] = useState(true);
+function Box({ children }) {
+	const [isOpen, setIsOpen] = useState(true);
 
 	return (
 		<div className="box">
-			<button className="btn-toggle" onClick={() => setIsOpen1(open => !open)}>
-				{isOpen1 ? '–' : '+'}
+			<button className="btn-toggle" onClick={() => setIsOpen(open => !open)}>
+				{isOpen ? '–' : '+'}
 			</button>
-			{isOpen1 && children}
+			{isOpen && children}
 		</div>
 	);
 }
@@ -108,25 +104,6 @@ function Movie({ movie }) {
 				</p>
 			</div>
 		</li>
-	);
-}
-
-function WatchedBox() {
-	const [watched, setWatched] = useState(watchedData);
-	const [isOpen2, setIsOpen2] = useState(true);
-
-	return (
-		<div className="box">
-			<button className="btn-toggle" onClick={() => setIsOpen2(open => !open)}>
-				{isOpen2 ? '–' : '+'}
-			</button>
-			{isOpen2 && (
-				<>
-					<WatchedSummary watched={watched} />
-					<WatchedList watched={watched} />
-				</>
-			)}
-		</div>
 	);
 }
 
