@@ -4,23 +4,32 @@ import { movieData, watchedData } from './../data';
 
 const average = arr => arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+// see problem below, before numResults function
+// notice that the problem is fixed using component composition
+// we're passing movies directly to NumResults and MovieList
 export default function App() {
+	const [movies, setMovies] = useState(movieData);
 	return (
 		<>
-			<Navbar />
-			<Main />
+			<Navbar>
+				<Logo />
+				<Search />
+				<NumResults movies={movies} />
+			</Navbar>
+
+			<Main>
+				<SearchedBox>
+					<MovieList movies={movies} />
+				</SearchedBox>
+
+				<WatchedBox />
+			</Main>
 		</>
 	);
 }
 
-function Navbar() {
-	return (
-		<nav className="nav-bar">
-			<Logo />
-			<Search />
-			<NumResults />
-		</nav>
-	);
+function Navbar({ children }) {
+	return <nav className="nav-bar">{children}</nav>;
 }
 
 function Logo() {
@@ -46,25 +55,25 @@ function Search() {
 	);
 }
 
-function NumResults() {
+// to fix the numResults thing here, you would have to pass movies to numResults,
+// and movies is defined in MovieList rn so you'll have to lift the state up,
+// and then pass movies all the way down
+// 1. App -> Navbar -> NumResults
+// 2. App -> Main -> SearchedBox -> MovieList
+// since none of the intermediate components need the prop, this is Prop drilling
+function NumResults({ movies }) {
 	return (
 		<p className="num-results">
-			{/* Found <strong>{movies.length}</strong> results */}
-			Found <strong>X</strong> results
+			Found <strong>{movies.length}</strong> results
 		</p>
 	);
 }
 
-function Main() {
-	return (
-		<main className="main">
-			<SearchedBox />
-			<WatchedBox />
-		</main>
-	);
+function Main({ children }) {
+	return <main className="main">{children}</main>;
 }
 
-function SearchedBox() {
+function SearchedBox({ children }) {
 	const [isOpen1, setIsOpen1] = useState(true);
 
 	return (
@@ -72,13 +81,12 @@ function SearchedBox() {
 			<button className="btn-toggle" onClick={() => setIsOpen1(open => !open)}>
 				{isOpen1 ? '–' : '+'}
 			</button>
-			{isOpen1 && <MovieList />}
+			{isOpen1 && children}
 		</div>
 	);
 }
 
-function MovieList() {
-	const [movies, setMovies] = useState(movieData);
+function MovieList({ movies }) {
 	return (
 		<ul className="list">
 			{movies?.map(movie => (
