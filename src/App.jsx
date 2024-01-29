@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMovies } from './hooks/useMovies';
+import { useLocalStorage } from './hooks/useLocalStorage';
 import './index.css';
 
 import { Navbar, Logo, Search, NumResults } from './components/Navbar';
@@ -13,12 +14,7 @@ export default function App() {
 	const [query, setQuery] = useState('');
 	const { movies, isLoading, error } = useMovies(query);
 
-	const [watched, setWatched] = useState(function () {
-		// if you clear the local storage, then JSON.parse(null) returns null
-		// watched will be then null instead of [], which creates problems
-		const watchedData = JSON.parse(localStorage.getItem('watched'));
-		return watchedData ? watchedData : [];
-	});
+	const [watched, setWatched] = useLocalStorage([], 'watched');
 
 	const [activeMovieId, setActiveMovieId] = useState('');
 	const userMovieRating = watched?.find(
@@ -40,13 +36,6 @@ export default function App() {
 	function handleDeleteWatched(movieId) {
 		setWatched(watched => watched.filter(m => m.imdbID !== movieId));
 	}
-
-	useEffect(
-		function () {
-			localStorage.setItem('watched', JSON.stringify(watched));
-		},
-		[watched]
-	);
 
 	return (
 		<>

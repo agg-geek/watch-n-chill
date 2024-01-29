@@ -2,10 +2,6 @@ import { useState, useEffect } from 'react';
 
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 
-// for a custom hook, the function name should start with 'use'
-// otherwise React does not recognise it as a custom hook
-// notice that query is passed as a function param, not as a prop
-// also, this file is a .js file (self)
 export function useMovies(query) {
 	const [movies, setMovies] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -46,8 +42,6 @@ export function useMovies(query) {
 			}
 
 			fetchMovies();
-			// notice that we couldn't handle this callback
-			// handleCloseMovieDetails();
 
 			return function () {
 				controller.abort();
