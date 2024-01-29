@@ -3,6 +3,7 @@ import './index.css';
 
 import { Navbar, Logo, Search, NumResults } from './components/Navbar';
 import MovieList from './components/MovieList';
+import MovieDetails from './components/MovieDetails';
 import WatchedSummary from './components/WatchedSummary';
 import WatchedList from './components/WatchedList';
 
@@ -13,7 +14,17 @@ export default function App() {
 	const [movies, setMovies] = useState([]);
 	const [watched, setWatched] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState('');
+	const [error, setError] = useState(null);
+
+	const [activeMovieId, setActiveMovieId] = useState('');
+
+	function handleSelectMovie(id) {
+		setActiveMovieId(activeId => (id === activeId ? null : id));
+	}
+
+	function handleCloseMovieDetails() {
+		setActiveMovieId(null);
+	}
 
 	useEffect(
 		function () {
@@ -60,12 +71,23 @@ export default function App() {
 				<Box>
 					{isLoading && <Loader />}
 					{error && <ErrorMessage message={error} />}
-					{!isLoading && !error && <MovieList movies={movies} />}
+					{!isLoading && !error && (
+						<MovieList movies={movies} onSelectMovie={handleSelectMovie} />
+					)}
 				</Box>
 
 				<Box>
-					<WatchedSummary watched={watched} />
-					<WatchedList watched={watched} />
+					{activeMovieId ? (
+						<MovieDetails
+							movieId={activeMovieId}
+							onCloseMovieDetails={handleCloseMovieDetails}
+						/>
+					) : (
+						<>
+							<WatchedSummary watched={watched} />
+							<WatchedList watched={watched} />
+						</>
+					)}
 				</Box>
 			</Main>
 		</>
