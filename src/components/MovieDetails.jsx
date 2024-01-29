@@ -101,7 +101,7 @@ export default function MovieDetails({
 										>
 											+ Add to list
 										</button>
-									)}{' '}
+									)}
 								</>
 							)}
 						</div>
