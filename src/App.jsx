@@ -41,14 +41,22 @@ export default function App() {
 	}
 
 	useEffect(
+		// we make the fetch request each time query changes
+		// but as we type the query, a lot of requests are fired
+		// also, if a particular requests takes longer time, it'll arrive last
+		// which may also cause our program to display the data for that (old) request
 		function () {
+			const controller = new AbortController();
+
 			async function fetchMovies() {
 				try {
 					setIsLoading(true);
 					setError('');
 
-					// prettier-ignore
-					const res = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`);
+					const res = await fetch(
+						`http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`,
+						{ signal: controller.signal }
+					);
 					if (!res.ok) throw new Error('Something went wrong');
 
 					const data = await res.json();
@@ -56,7 +64,10 @@ export default function App() {
 
 					setMovies(data.Search);
 				} catch (err) {
-					setError(err.message);
+					// an aborted request is considered to be an error, hence ignore it
+					if (err.name !== 'AbortError') {
+						setError(err.message);
+					}
 				} finally {
 					setIsLoading(false);
 				}
@@ -69,6 +80,10 @@ export default function App() {
 			}
 
 			fetchMovies();
+
+			return function () {
+				controller.abort();
+			};
 		},
 		[query]
 	);

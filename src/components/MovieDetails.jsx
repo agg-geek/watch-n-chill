@@ -69,9 +69,6 @@ export default function MovieDetails({
 				document.title = 'Watch-n-chill';
 			};
 		},
-		// notice that this effect is run whenever the movieId title changes
-		// we cannot run it just on component mount because the data might not have been fetched
-		// leading title to be undefined, this is also the reason we have if (!title) above
 		[title]
 	);
 
