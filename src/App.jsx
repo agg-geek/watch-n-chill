@@ -16,7 +16,6 @@ export default function App() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	// you can pass a callback function to set the state for useState
 	const [watched, setWatched] = useState(function () {
 		return JSON.parse(localStorage.getItem('watched'));
 	});

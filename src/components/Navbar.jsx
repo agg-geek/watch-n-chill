@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export function Navbar({ children }) {
 	return <nav className="nav-bar">{children}</nav>;
@@ -14,6 +14,15 @@ export function Logo() {
 }
 
 export function Search({ query, handleQuery }) {
+	const searchElem = useRef(null);
+
+	useEffect(function () {
+		// functionality to focus the search input when the app starts
+		// notice that we set .focus() in useEffect because the searchElem
+		// will exist only after this Search component is committed to DOM
+		searchElem.current.focus();
+	}, []);
+
 	return (
 		<input
 			className="search"
@@ -21,6 +30,7 @@ export function Search({ query, handleQuery }) {
 			placeholder="Search movies..."
 			value={query}
 			onChange={e => handleQuery(e.target.value)}
+			ref={searchElem}
 		/>
 	);
 }
