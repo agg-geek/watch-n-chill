@@ -22,10 +22,7 @@ export function Search({ query, handleQuery }) {
 
 	useEffect(
 		function () {
-			// press Enter anytime in the app to focus the searchElem
 			function callback(e) {
-				// if the searchElem is already active, we return
-				// as otherwise, the following code will setQuery('')
 				if (document.activeElement === searchElem.current) return;
 
 				if (e.code === 'Enter') {
