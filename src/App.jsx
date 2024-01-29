@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useMovies } from './hooks/useMovies';
 import './index.css';
 
 import { Navbar, Logo, Search, NumResults } from './components/Navbar';
@@ -8,13 +9,9 @@ import WatchedSummary from './components/WatchedSummary';
 import WatchedList from './components/WatchedList';
 import Loader from './components/Loader';
 
-const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
-
 export default function App() {
 	const [query, setQuery] = useState('');
-	const [movies, setMovies] = useState([]);
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState(null);
+	const { movies, isLoading, error } = useMovies(query);
 
 	const [watched, setWatched] = useState(function () {
 		return JSON.parse(localStorage.getItem('watched'));
@@ -46,50 +43,6 @@ export default function App() {
 			localStorage.setItem('watched', JSON.stringify(watched));
 		},
 		[watched]
-	);
-
-	useEffect(
-		function () {
-			const controller = new AbortController();
-
-			async function fetchMovies() {
-				try {
-					setIsLoading(true);
-					setError('');
-
-					const res = await fetch(
-						`http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`,
-						{ signal: controller.signal }
-					);
-					if (!res.ok) throw new Error('Something went wrong');
-
-					const data = await res.json();
-					if (data.Response === 'False') throw new Error(data.Error);
-
-					setMovies(data.Search);
-				} catch (err) {
-					if (err.name !== 'AbortError') {
-						setError(err.message);
-					}
-				} finally {
-					setIsLoading(false);
-				}
-			}
-
-			if (!query.length) {
-				setError('');
-				setMovies([]);
-				return;
-			}
-
-			fetchMovies();
-			handleCloseMovieDetails();
-
-			return function () {
-				controller.abort();
-			};
-		},
-		[query]
 	);
 
 	return (

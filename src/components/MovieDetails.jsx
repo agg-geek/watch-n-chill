@@ -14,17 +14,10 @@ export default function MovieDetails({
 	const [isLoading, setIsLoading] = useState(false);
 	const [userRating, setUserRating] = useState('');
 
-	// DEMO: Refs to persist data between re-renders
-	// say we want to store the number of times the user clicks on the star rating
-	// since userRating is a state variable which will rerender state
-	// we cannot use a normal variable cnt as it will reset to 0 on rerender
-
 	const numRatings = useRef(0);
 
 	useEffect(
 		function () {
-			// change numRatings only when the user has actually rated
-			// you need the if condition (check!)
 			if (userRating) numRatings.current++;
 		},
 		[userRating]
