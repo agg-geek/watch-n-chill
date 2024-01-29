@@ -14,7 +14,10 @@ export default function App() {
 	const { movies, isLoading, error } = useMovies(query);
 
 	const [watched, setWatched] = useState(function () {
-		return JSON.parse(localStorage.getItem('watched'));
+		// if you clear the local storage, then JSON.parse(null) returns null
+		// watched will be then null instead of [], which creates problems
+		const watchedData = JSON.parse(localStorage.getItem('watched'));
+		return watchedData ? watchedData : [];
 	});
 
 	const [activeMovieId, setActiveMovieId] = useState('');
