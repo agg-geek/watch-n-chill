@@ -80,13 +80,10 @@ export default function MovieDetails({
 
 			document.addEventListener('keydown', closeMovieOnEscape);
 
-			// you need to cleanup the event listener otherwise the
-			// listeners will add up
 			return function () {
 				document.removeEventListener('keydown', closeMovieOnEscape);
 			};
 		},
-		// notice the dependency array!
 		[onCloseMovieDetails]
 	);
 

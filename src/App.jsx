@@ -13,13 +13,15 @@ const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 export default function App() {
 	const [query, setQuery] = useState('');
 	const [movies, setMovies] = useState([]);
-	const [watched, setWatched] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(null);
 
+	// you can pass a callback function to set the state for useState
+	const [watched, setWatched] = useState(function () {
+		return JSON.parse(localStorage.getItem('watched'));
+	});
+
 	const [activeMovieId, setActiveMovieId] = useState('');
-	// if activeMovie is watched, userMovieRating contains the movie rating
-	// also used to distinguish if the movie has been watched before or not
 	const userMovieRating = watched?.find(
 		movie => movie.imdbID === activeMovieId
 	)?.userRating;
@@ -41,10 +43,13 @@ export default function App() {
 	}
 
 	useEffect(
-		// we make the fetch request each time query changes
-		// but as we type the query, a lot of requests are fired
-		// also, if a particular requests takes longer time, it'll arrive last
-		// which may also cause our program to display the data for that (old) request
+		function () {
+			localStorage.setItem('watched', JSON.stringify(watched));
+		},
+		[watched]
+	);
+
+	useEffect(
 		function () {
 			const controller = new AbortController();
 
@@ -64,7 +69,6 @@ export default function App() {
 
 					setMovies(data.Search);
 				} catch (err) {
-					// an aborted request is considered to be an error, hence ignore it
 					if (err.name !== 'AbortError') {
 						setError(err.message);
 					}
