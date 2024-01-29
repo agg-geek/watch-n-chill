@@ -8,6 +8,7 @@ export default function MovieDetails({
 	movieId,
 	onCloseMovieDetails,
 	onAddWatchedMovie,
+	userMovieRating,
 }) {
 	const [movie, setMovie] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
@@ -84,15 +85,24 @@ export default function MovieDetails({
 					</header>
 					<section>
 						<div className="rating">
-							<StarRating
-								maxRating={10}
-								size={24}
-								onSetRating={setUserRating}
-							/>
-							{userRating > 0 && (
-								<button className="btn-add" onClick={handleAddWatched}>
-									+ Add to list
-								</button>
+							{userMovieRating ? (
+								<p>You rated this movie {userMovieRating} ⭐️</p>
+							) : (
+								<>
+									<StarRating
+										maxRating={10}
+										size={24}
+										onSetRating={setUserRating}
+									/>
+									{userRating > 0 && (
+										<button
+											className="btn-add"
+											onClick={handleAddWatched}
+										>
+											+ Add to list
+										</button>
+									)}{' '}
+								</>
 							)}
 						</div>
 						<p>

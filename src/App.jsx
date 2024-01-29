@@ -18,6 +18,11 @@ export default function App() {
 	const [error, setError] = useState(null);
 
 	const [activeMovieId, setActiveMovieId] = useState('');
+	// if activeMovie is watched, userMovieRating contains the movie rating
+	// also used to distinguish if the movie has been watched before or not
+	const userMovieRating = watched?.find(
+		movie => movie.imdbID === activeMovieId
+	)?.userRating;
 
 	function handleSelectMovie(id) {
 		setActiveMovieId(activeId => (id === activeId ? null : id));
@@ -86,6 +91,7 @@ export default function App() {
 						<MovieDetails
 							key={activeMovieId}
 							movieId={activeMovieId}
+							userMovieRating={userMovieRating}
 							onCloseMovieDetails={handleCloseMovieDetails}
 							onAddWatchedMovie={handleAddWatchedMovie}
 						/>
