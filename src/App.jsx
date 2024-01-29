@@ -6,6 +6,7 @@ import MovieList from './components/MovieList';
 import MovieDetails from './components/MovieDetails';
 import WatchedSummary from './components/WatchedSummary';
 import WatchedList from './components/WatchedList';
+import Loader from './components/Loader';
 
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 
@@ -24,6 +25,10 @@ export default function App() {
 
 	function handleCloseMovieDetails() {
 		setActiveMovieId(null);
+	}
+
+	function handleAddWatchedMovie(movie) {
+		setWatched(watched => [...watched, movie]);
 	}
 
 	useEffect(
@@ -81,6 +86,7 @@ export default function App() {
 						<MovieDetails
 							movieId={activeMovieId}
 							onCloseMovieDetails={handleCloseMovieDetails}
+							onAddWatchedMovie={handleAddWatchedMovie}
 						/>
 					) : (
 						<>
