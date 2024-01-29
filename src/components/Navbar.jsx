@@ -17,11 +17,28 @@ export function Search({ query, handleQuery }) {
 	const searchElem = useRef(null);
 
 	useEffect(function () {
-		// functionality to focus the search input when the app starts
-		// notice that we set .focus() in useEffect because the searchElem
-		// will exist only after this Search component is committed to DOM
 		searchElem.current.focus();
 	}, []);
+
+	useEffect(
+		function () {
+			// press Enter anytime in the app to focus the searchElem
+			function callback(e) {
+				// if the searchElem is already active, we return
+				// as otherwise, the following code will setQuery('')
+				if (document.activeElement === searchElem.current) return;
+
+				if (e.code === 'Enter') {
+					searchElem.current.focus();
+					handleQuery('');
+				}
+			}
+
+			document.addEventListener('keydown', callback);
+			return () => document.addEventListener('keydown', callback);
+		},
+		[handleQuery]
+	);
 
 	return (
 		<input
