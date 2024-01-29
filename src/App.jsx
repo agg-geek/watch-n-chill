@@ -9,40 +9,50 @@ import WatchedList from './components/WatchedList';
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 
 export default function App() {
+	const [query, setQuery] = useState('');
 	const [movies, setMovies] = useState([]);
 	const [watched, setWatched] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
-	const tempQuery = 'interstellar';
 
-	// useEffect cannot use async fns directly as async fn returns a promise
-	useEffect(function () {
-		async function fetchMovies() {
-			try {
-				setIsLoading(true);
+	useEffect(
+		function () {
+			async function fetchMovies() {
+				try {
+					setIsLoading(true);
+					setError('');
 
-				// prettier-ignore
-				const res = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${tempQuery}`);
-				if (!res.ok) throw new Error('Something went wrong');
+					// prettier-ignore
+					const res = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`);
+					if (!res.ok) throw new Error('Something went wrong');
 
-				const data = await res.json();
-				if (data.Response === 'False') throw new Error(data.Error);
+					const data = await res.json();
+					if (data.Response === 'False') throw new Error(data.Error);
 
-				setMovies(data.Search);
-			} catch (err) {
-				setError(err.message);
-			} finally {
-				setIsLoading(false);
+					setMovies(data.Search);
+				} catch (err) {
+					setError(err.message);
+				} finally {
+					setIsLoading(false);
+				}
 			}
-		}
-		fetchMovies();
-	}, []);
+
+			if (!query.length) {
+				setError('');
+				setMovies([]);
+				return;
+			}
+
+			fetchMovies();
+		},
+		[query]
+	);
 
 	return (
 		<>
 			<Navbar>
 				<Logo />
-				<Search />
+				<Search query={query} handleQuery={setQuery} />
 				<NumResults movies={movies} />
 			</Navbar>
 
@@ -83,7 +93,6 @@ function Loader() {
 	return <p className="loader">Loading...</p>;
 }
 
-// ErrorMessage because Error keyword already exists in JS
 function ErrorMessage({ message }) {
 	return (
 		<p className="error">
