@@ -72,6 +72,24 @@ export default function MovieDetails({
 		[title]
 	);
 
+	useEffect(
+		function () {
+			function closeMovieOnEscape(evt) {
+				if (evt.code === 'Escape') onCloseMovieDetails();
+			}
+
+			document.addEventListener('keydown', closeMovieOnEscape);
+
+			// you need to cleanup the event listener otherwise the
+			// listeners will add up
+			return function () {
+				document.removeEventListener('keydown', closeMovieOnEscape);
+			};
+		},
+		// notice the dependency array!
+		[onCloseMovieDetails]
+	);
+
 	return (
 		<div className="details">
 			{isLoading ? (

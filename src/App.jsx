@@ -80,6 +80,7 @@ export default function App() {
 			}
 
 			fetchMovies();
+			handleCloseMovieDetails();
 
 			return function () {
 				controller.abort();
