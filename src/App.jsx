@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useMovies } from './hooks/useMovies';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import './index.css';

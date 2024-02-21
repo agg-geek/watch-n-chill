@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useKey } from '../hooks/useKey';
 
 export function Navbar({ children }) {
 	return <nav className="nav-bar">{children}</nav>;
@@ -8,7 +9,7 @@ export function Logo() {
 	return (
 		<div className="logo">
 			<span role="img">🍿</span>
-			<h1>usePopcorn</h1>
+			<h1>Watch-n-chill</h1>
 		</div>
 	);
 }
@@ -20,22 +21,11 @@ export function Search({ query, handleQuery }) {
 		searchElem.current.focus();
 	}, []);
 
-	useEffect(
-		function () {
-			function callback(e) {
-				if (document.activeElement === searchElem.current) return;
-
-				if (e.code === 'Enter') {
-					searchElem.current.focus();
-					handleQuery('');
-				}
-			}
-
-			document.addEventListener('keydown', callback);
-			return () => document.addEventListener('keydown', callback);
-		},
-		[handleQuery]
-	);
+	useKey('Enter', function () {
+		if (document.activeElement === searchElem.current) return;
+		searchElem.current.focus();
+		handleQuery('');
+	});
 
 	return (
 		<input
